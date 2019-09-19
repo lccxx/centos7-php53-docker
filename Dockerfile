@@ -34,7 +34,6 @@ sed -i 's/user = nobody/user = nginx/g' /etc/php-fpm.conf; \
 sed -i 's/group = nobody/group = nginx/g' /etc/php-fpm.conf; \
 sed -i 's/listen = 127.0.0.1\:9000/listen = \/tmp\/php-fpm.sock/g' /etc/php-fpm.conf; \
 sed -i 's/listen.allowed_clients = /;listen.allowed_clients = /g' /etc/php-fpm.conf; \
-sed -i 's/worker_processes  1;/worker_processes  auto;\ndaemon off;/' /etc/nginx/nginx.conf; \
 sed -i 's/#tcp_nopush/client_max_body_size 2048M;\n\t#tcp_nopush/' /etc/nginx/nginx.conf; \
 touch /var/log/php-fpm.log; \
 chown nginx:nginx /var/log/php-fpm.log; \
@@ -51,7 +50,7 @@ cp command/* /usr/bin/; \
 mkdir /etc/service; \
 mkdir /opt/service_nginx; \
 mkdir /opt/service_php-fpm; \
-echo -e '#!/bin/bash\n\nexec nginx >> /var/log/nginx/run.log 2>&1' > /opt/service_nginx/run; \
+echo -e '#!/bin/bash\n\nexec nginx -g "daemon off;" >> /var/log/nginx/run.log 2>&1' > /opt/service_nginx/run; \
 chmod +x /opt/service_nginx/run; \
 echo -e '#!/bin/bash\n\nexec setuidgid nginx php-fpm >> /var/log/php-fpm_run.log 2>&1' > /opt/service_php-fpm/run; \
 chmod +x /opt/service_php-fpm/run; \
