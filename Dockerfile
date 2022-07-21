@@ -11,7 +11,7 @@ tar -xf php-5.3.27.tar.gz; cd php-5.3.27; \
 ./configure --prefix=/usr --sysconfdir=/etc --with-config-file-path=/etc --localstatedir=/var \
             --with-iconv --with-jpeg-dir --with-png-dir --with-freetype-dir \
             --with-mysql=mysqlnd --with-mysqli=mysqlnd --with-pdo-mysql=mysqlnd --with-xmlrpc \
-            --with-curl --with-curlwrappers --with-gd --with-openssl --with-mhash \
+            --with-curl --with-curlwrappers --with-gd --with-openssl --with-mhash --with-gmp \
             --enable-xml --enable-bcmath --enable-shmop --enable-gd-native-ttf \
             --enable-sysvsem --enable-sockets --enable-zip --enable-soap \
             --enable-mbstring --enable-pcntl --enable-fpm; \
