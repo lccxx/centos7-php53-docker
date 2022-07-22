@@ -3,6 +3,7 @@ FROM centos:6
 RUN set -ex; \
 echo "# install php(php53) & nginx"; \
 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
+sed -i 's/mirror.centos.org\/centos/vault.centos.org/g' /etc/yum.repos.d/CentOS-Base.repo; \
 yum install -y epel-release; yum update -y; \
 yum install -y gcc wget curl nginx libxml2-devel libcurl-devel libjpeg-turbo-devel libpng-devel freetype-devel openssl-devel; \
 mkdir /tmp/build; \
