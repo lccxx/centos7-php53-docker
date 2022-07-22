@@ -1,11 +1,10 @@
-FROM centos:6
+FROM centos:7
 
 RUN set -ex; \
 echo "# install php(php53) & nginx"; \
 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
-sed -i 's/mirror.centos.org\/centos/vault.centos.org/g' /etc/yum.repos.d/CentOS-Base.repo; \
 yum install -y epel-release; yum update -y; \
-yum install -y gcc wget curl nginx libxml2-devel libcurl-devel libjpeg-turbo-devel libpng-devel freetype-devel openssl-devel; \
+yum install -y gcc autoconf wget curl nginx libxml2-devel libcurl-devel libjpeg-turbo-devel libpng-devel freetype-devel openssl-devel gmp-devel; \
 mkdir /tmp/build; \
 wget https://www.php.net/distributions/php-5.3.27.tar.gz; \
 tar -xf php-5.3.27.tar.gz; cd php-5.3.27; \
@@ -20,7 +19,8 @@ make && make install; \
 cp ./php.ini-production /etc/php.ini; \
 cp ./sapi/fpm/php-fpm.conf /etc/php-fpm.conf; \
 cd /tmp/build; \
-curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer; \
+wget https://getcomposer.org/download/latest-1.x/composer.phar; mv composer.phar /usr/bin/composer; \
+chmod +x /usr/bin/composer; \
 cd /tmp/build; wget https://github.com/redis/hiredis/archive/v0.13.3.tar.gz -O hiredis-v0.13.3.tar.gz; \
 tar -xf hiredis-v0.13.3.tar.gz; cd hiredis-0.13.3; make && make install; \
 cd /tmp/build; wget https://github.com/nrk/phpiredis/archive/v1.0.0.tar.gz -O phpiredis-v1.0.0.tar.gz; \
