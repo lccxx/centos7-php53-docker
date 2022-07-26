@@ -3,7 +3,9 @@ FROM centos:7
 RUN set -ex; \
 echo "# install php(php53) & nginx"; \
 ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime; \
-yum install -y epel-release; yum update -y; \
+yum install -y epel-release yum-utils; \
+rpm -Uvh http://nginx.org/packages/centos/7/noarch/RPMS/nginx-release-centos-7-0.el7.ngx.noarch.rpm; \
+yum clean all; yum makecache; yum -y update; \
 yum install -y gcc autoconf wget curl nginx libxml2-devel libcurl-devel libjpeg-turbo-devel libpng-devel freetype-devel openssl-devel gmp-devel; \
 mkdir /tmp/build; \
 wget https://www.php.net/distributions/php-5.3.27.tar.gz; \
@@ -29,15 +31,18 @@ echo 'extension=phpiredis.so' >> /etc/php.ini; \
 printf "\n" | pecl install apc; \
 echo 'extension=apc.so' >> /etc/php.ini; \
 echo "# config php & nginx"; \
+groupadd -g 900 www; adduser --system --no-user-group -u 900 -g www www; \
 sed -i 's/;date.timezone =/date.timezone = Asia\/Shanghai/g' /etc/php.ini; \
 sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php-fpm.conf; \
-sed -i 's/user = nobody/user = nginx/g' /etc/php-fpm.conf; \
-sed -i 's/group = nobody/group = nginx/g' /etc/php-fpm.conf; \
+sed -i 's/user = nobody/user = www/g' /etc/php-fpm.conf; \
+sed -i 's/group = nobody/group = www/g' /etc/php-fpm.conf; \
 sed -i 's/listen = 127.0.0.1\:9000/listen = \/tmp\/php-fpm.sock/g' /etc/php-fpm.conf; \
 sed -i 's/listen.allowed_clients = /;listen.allowed_clients = /g' /etc/php-fpm.conf; \
+sed -i 's/worker_processes  1;/worker_processes  auto;\ndaemon off;/'   /etc/nginx/nginx.conf; \
 sed -i 's/#tcp_nopush/client_max_body_size 2048M;\n\t#tcp_nopush/' /etc/nginx/nginx.conf; \
+sed -i 's/user  nginx/user  www/g' /etc/nginx/nginx.conf; \
 touch /var/log/php-fpm.log; \
-chown nginx:nginx /var/log/php-fpm.log; \
+chown www:www /var/log/php-fpm.log; \
 echo 'server { include /srv/*_nginx.conf; }' > /etc/nginx/conf.d/default.conf; \
 echo "# start nginx and php service"; \
 cd /tmp/build; \
@@ -53,13 +58,14 @@ mkdir /opt/service_nginx; \
 mkdir /opt/service_php-fpm; \
 echo -e '#!/bin/bash\n\nexec nginx -g "daemon off;" >> /var/log/nginx/run.log 2>&1' > /opt/service_nginx/run; \
 chmod +x /opt/service_nginx/run; \
-echo -e '#!/bin/bash\n\nexec setuidgid nginx php-fpm >> /var/log/php-fpm_run.log 2>&1' > /opt/service_php-fpm/run; \
+echo -e '#!/bin/bash\n\nexec setuidgid www php-fpm >> /var/log/php-fpm_run.log 2>&1' > /opt/service_php-fpm/run; \
 chmod +x /opt/service_php-fpm/run; \
 ln -s /opt/service_nginx /etc/service/nginx; \
 ln -s /opt/service_php-fpm /etc/service/php-fpm; \
 echo "# clean"; \
 rm -rf /tmp/build; \
-yum remove -y wget gcc
+yum remove -y wget gcc; \
+yum autoremove -y;
 
 WORKDIR /srv
 
