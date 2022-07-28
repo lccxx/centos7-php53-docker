@@ -21,7 +21,7 @@ make && make install; \
 cp ./php.ini-production /etc/php.ini; \
 cp ./sapi/fpm/php-fpm.conf /etc/php-fpm.conf; \
 cd /tmp/build; \
-wget https://getcomposer.org/download/latest-1.x/composer.phar; mv composer.phar /usr/bin/composer; \
+wget https://getcomposer.org/download/1.5.2/composer.phar; mv composer.phar /usr/bin/composer; \
 chmod +x /usr/bin/composer; \
 cd /tmp/build; wget https://github.com/redis/hiredis/archive/v0.13.3.tar.gz -O hiredis-v0.13.3.tar.gz; \
 tar -xf hiredis-v0.13.3.tar.gz; cd hiredis-0.13.3; make && make install; \
